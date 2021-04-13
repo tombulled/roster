@@ -11,18 +11,17 @@ class Register(collections.OrderedDict):
             def wrapper(*args, **kwargs):
                 return func(*args, **kwargs)
 
-            self[wrapper] = self._parse(*args, **kwargs)
+            self[wrapper] = (args, kwargs)
 
             return wrapper
 
         return decorator
 
-    def _parse(self, *args, **kwargs):
-        return (args, kwargs)
-
 @attr.s
-class ObjectRegister(Register):
-    type: type = attr.ib()
+class HookedRegister(Register):
+    hook = attr.ib()
 
-    def _parse(self, *args, **kwargs):
-        return self.type(*args, **kwargs)
+    def __setitem__(self, key, val: tuple):
+        args, kwargs = val
+
+        super().__setitem__(key, self.hook(*args, **kwargs))

@@ -1,1 +1,1 @@
-from .registers import Register, ObjectRegister
+from .registers import Register, HookedRegister
