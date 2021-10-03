@@ -1,9 +1,33 @@
 # register
-Python function registers
+Python object registers. Keep track of your classes, functions and data.
 
 ## Usage:
 
 ### `FlatRegister`
+
+#### Example: Basic Data Registration
+
+##### Implementation
+```python
+import register
+
+datas = register.FlatRegister()
+
+datas(1)
+datas('foo')
+datas(print)
+```
+
+##### Usage
+```python
+>>> datas
+[1, 'foo', <built-in function print>]
+>>>
+```
+
+#### Example: Class Register
+
+##### Implementation
 ```python
 >>> import register
 >>>
@@ -12,8 +36,15 @@ Python function registers
 >>> @classes
 >>> class Foo: pass
 >>>
+>>> @classes
+>>> class Bar: pass
+>>>
+```
+
+##### Usage
+```python
 >>> classes
-[<class '__main__.Foo'>]
+[<class '__main__.Foo'>, <class '__main__.Bar'>]
 >>>
 ```
 
