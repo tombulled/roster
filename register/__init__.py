@@ -1,6 +1,6 @@
 from .registers import \
 (
-    FlatRegister,
+    Record,
+    Roster,
     Register,
-    InverseRegister,
 )

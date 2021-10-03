@@ -25,20 +25,19 @@ datas(print)
 >>>
 ```
 
-#### Example: Class Register
+#### Example: Simple Class Register
 
 ##### Implementation
 ```python
->>> import register
->>>
->>> classes = register.FlatRegister()
->>>
->>> @classes
->>> class Foo: pass
->>>
->>> @classes
->>> class Bar: pass
->>>
+import register
+
+classes = register.FlatRegister()
+
+@classes
+class Foo: pass
+
+@classes
+class Bar: pass
 ```
 
 ##### Usage
@@ -48,32 +47,51 @@ datas(print)
 >>>
 ```
 
-### `Register`
-
-#### Example: Basic State
+#### Example: Hooked Registration
 
 ##### Implementation
 ```python
 import register
 
-routes = register.Register()
+square_numbers = register.FlatRegister(lambda n: n ** 2)
 
-@routes('/user', method = 'POST')
-def create_user(name: str): -> str
-    return f'Created user: {name!r}'
+square_numbers(1)
+square_numbers(2)
+square_numbers(3)
 ```
 
 ##### Usage
 ```python
->>> routes
-Register([(<function create_user at 0x7f579ea07ca0>, State(args=('/user',), kwargs={'method': 'POST'}))])
->>>
->>> routes[create_user]['kwargs']
-{'method': 'POST'}
+>>> square_numbers
+[1, 4, 9]
 >>>
 ```
 
-#### Example: Data Class
+### `Register`
+
+#### Example: Basic Stateful Registration
+
+##### Implementation
+```python
+import register
+
+functions = register.Register()
+
+@functions(author = 'Sam')
+def foo(): ...
+
+@functions(author = 'Robbie')
+def bar(): ...
+```
+
+##### Usage
+```python
+>>> functions
+{<function foo at 0x7fa9110a50d0>: State(args=(), kwargs={'author': 'Sam'}), <function bar at 0x7fa9110a5160>: State(args=(), kwargs={'author': 'Robbie'})}
+>>>
+```
+
+#### Example: Hooked Registration
 
 ##### Implementation
 ```python
@@ -103,7 +121,28 @@ def create_user(name: str) -> str:
 
 ### `InverseRegister`
 
-#### Implementation
+#### Example: Basic Inverse Registration
+
+##### Implementation
+```python
+import register
+
+numbers = register.InverseRegister()
+
+numbers('one')(1)
+numbers('two')(2)
+```
+
+##### Usage
+```python
+>>> numbers
+{'one': 1, 'two': 2}
+>>>
+```
+
+#### Example: Basic Inverse Class Registration
+
+##### Implementation
 ```python
 import register
 
@@ -114,7 +153,7 @@ class GoogleChrome:
     pass
 ```
 
-#### Usage
+##### Usage
 ```python
 >>> browsers
 {'google-chrome': <class '__main__.GoogleChrome'>}
