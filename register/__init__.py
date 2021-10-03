@@ -1,2 +1,6 @@
-# from .registers import Register, HookedRegister
-from .registers import *
+from .registers import \
+(
+    FlatRegister,
+    Register,
+    InverseRegister,
+)

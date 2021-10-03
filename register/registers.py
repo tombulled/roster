@@ -1,29 +1,45 @@
-import collections
-
-import attr
+import typing
 
 from . import models
+from . import hooks
 
-'''
-Notes:
-    Should work with unhashable objects? (e.g. don't use a dict)
-'''
+# NOTE: Use `attr` ?
+# NOTE: Use `collections.OrderedDict` ?
 
 class FlatRegister(list):
-    __call__ = list.append
+    def __call__(self, item):
+        self.append(item)
 
-class Register(collections.OrderedDict):
+        return item
+
+class Register(dict):
+    hook = None
+
+    def __init__(self, hook = hooks.state) -> None:
+        super().__init__()
+
+        self.hook = hook
+
     def __call__(self, *args, **kwargs):
         def decorator(item):
-            self[item] = models.State(args = args, kwargs = kwargs)
+            self.__setitem__(item, self.hook(*args, **kwargs))
 
             return item
 
         return decorator
 
-@attr.s(repr = False)
-class HookedRegister(Register):
-    hook = attr.ib()
+class InverseRegister(dict):
+    hook = None
 
-    def __setitem__(self, key: str, state: models.State) -> None:
-        super().__setitem__(key, self.hook(*state.args, **state.kwargs))
+    def __init__(self, hook = hooks.identity) -> None:
+        super().__init__()
+
+        self.hook = hook
+
+    def __call__(self, *args, **kwargs):
+        def decorator(item):
+            self.__setitem__(self.hook(*args, **kwargs), item)
+
+            return item
+
+        return decorator
