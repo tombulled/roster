@@ -1,5 +1,5 @@
-# register
-Python object registers. Keep track of your classes, functions and data.
+# registry
+Register your data
 
 ## Usage:
 
