@@ -3,35 +3,35 @@ Register your data
 
 ## Usage:
 
-### `FlatRegister`
+### `Record`
 
 #### Example: Basic Data Registration
 
 ##### Implementation
 ```python
-import register
+import registry
 
-datas = register.FlatRegister()
+data = registry.Record()
 
-datas(1)
-datas('foo')
-datas(print)
+data(1)
+data('foo')
+data(print)
 ```
 
 ##### Usage
 ```python
->>> datas
+>>> data
 [1, 'foo', <built-in function print>]
 >>>
 ```
 
-#### Example: Simple Class Register
+#### Example: Simple Decorator Registration
 
 ##### Implementation
 ```python
-import register
+import registry
 
-classes = register.FlatRegister()
+classes = registry.Record()
 
 @classes
 class Foo: pass
@@ -51,9 +51,9 @@ class Bar: pass
 
 ##### Implementation
 ```python
-import register
+import registry
 
-square_numbers = register.FlatRegister(lambda n: n ** 2)
+square_numbers = registry.Record(lambda n: n ** 2)
 
 square_numbers(1)
 square_numbers(2)
@@ -69,13 +69,13 @@ square_numbers(3)
 
 ### `Register`
 
-#### Example: Basic Stateful Registration
+#### Example: Basic Contextual Registration
 
 ##### Implementation
 ```python
-import register
+import registry
 
-functions = register.Register()
+functions = registry.Register()
 
 @functions(author = 'Sam')
 def foo(): ...
@@ -87,7 +87,7 @@ def bar(): ...
 ##### Usage
 ```python
 >>> functions
-{<function foo at 0x7fa9110a50d0>: State(args=(), kwargs={'author': 'Sam'}), <function bar at 0x7fa9110a5160>: State(args=(), kwargs={'author': 'Robbie'})}
+{<function foo at 0x7fa9110a50d0>: Context(author='Sam'), <function bar at 0x7fa9110a5160>: Context(author='Robbie')}
 >>>
 ```
 
@@ -95,7 +95,7 @@ def bar(): ...
 
 ##### Implementation
 ```python
-import register
+import registry
 import dataclasses
 
 @dataclasses.dataclass
@@ -103,7 +103,7 @@ class Route:
     path: str
     method: str = 'GET'
 
-routes = register.Register(Route)
+routes = registry.Register(Route)
 
 @routes('/user', method = 'POST')
 def create_user(name: str) -> str:
@@ -114,48 +114,5 @@ def create_user(name: str) -> str:
 ```python
 >>> routes
 {<function create_user at 0x7f2f9d775ee0>: Route(path='/user', method='POST')}
->>>
->>> routes[create_user].path
-'/user'
-```
-
-### `InverseRegister`
-
-#### Example: Basic Inverse Registration
-
-##### Implementation
-```python
-import register
-
-numbers = register.InverseRegister()
-
-numbers('one')(1)
-numbers('two')(2)
-```
-
-##### Usage
-```python
->>> numbers
-{'one': 1, 'two': 2}
->>>
-```
-
-#### Example: Basic Inverse Class Registration
-
-##### Implementation
-```python
-import register
-
-browsers = register.InverseRegister()
-
-@browsers('google-chrome')
-class GoogleChrome:
-    pass
-```
-
-##### Usage
-```python
->>> browsers
-{'google-chrome': <class '__main__.GoogleChrome'>}
 >>>
 ```
