@@ -10,7 +10,7 @@ class Record(list):
     def __call__(self, item: typing.Any) -> typing.Any:
         self.append(self.hook(item) if self.hook is not None else item)
 
-        return self[-1]
+        return item
 
 @dataclasses.dataclass(repr = False)
 class Register(dict):
