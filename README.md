@@ -1,4 +1,4 @@
-# registry
+# registrate
 Register your data
 
 ## Usage:
