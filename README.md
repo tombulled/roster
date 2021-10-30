@@ -1,5 +1,5 @@
 # registrate
-Register your data
+Python object registers. Keep track of your classes, functions and data. 
 
 ## Usage:
 
