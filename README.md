@@ -1,5 +1,5 @@
-# registrate
-Python object registers. Keep track of your classes, functions and data. 
+# register
+Python object registers. Keep track of your classes, functions and data.
 
 ## Usage:
 
@@ -9,9 +9,9 @@ Python object registers. Keep track of your classes, functions and data.
 
 ##### Implementation
 ```python
-import registry
+import register
 
-data = registry.Record()
+data = register.Record()
 
 data(1)
 data('foo')
@@ -29,9 +29,9 @@ data(print)
 
 ##### Implementation
 ```python
-import registry
+import register
 
-classes = registry.Record()
+classes = register.Record()
 
 @classes
 class Foo: pass
@@ -51,9 +51,9 @@ class Bar: pass
 
 ##### Implementation
 ```python
-import registry
+import register
 
-square_numbers = registry.Record(lambda n: n ** 2)
+square_numbers = register.Record(lambda n: n ** 2)
 
 square_numbers(1)
 square_numbers(2)
@@ -73,9 +73,9 @@ square_numbers(3)
 
 ##### Implementation
 ```python
-import registry
+import register
 
-functions = registry.Register()
+functions = register.Register()
 
 @functions(author = 'Sam')
 def foo(): ...
@@ -95,7 +95,7 @@ def bar(): ...
 
 ##### Implementation
 ```python
-import registry
+import register
 import dataclasses
 
 @dataclasses.dataclass
@@ -103,7 +103,7 @@ class Route:
     path: str
     method: str = 'GET'
 
-routes = registry.Register(Route)
+routes = register.Register(Route)
 
 @routes('/user', method = 'POST')
 def create_user(name: str) -> str:
