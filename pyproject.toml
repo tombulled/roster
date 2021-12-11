@@ -1,4 +1,4 @@
-p[tool.poetry]
+[tool.poetry]
 name = "register"
 version = "0.1.5"
 description = "Python object registers. Keep track of your classes, functions and data. "
