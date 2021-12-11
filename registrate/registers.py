@@ -6,7 +6,7 @@ from . import utils
 
 @dataclasses.dataclass(repr = False)
 class Record(list):
-    hook: typing.Callable[[typing.Any], typing.Any]] = utils.identity
+    hook: typing.Callable[[typing.Any], typing.Any] = utils.identity
 
     def __call__(self, item: typing.Any) -> typing.Any:
         self.append(self.hook(item))
