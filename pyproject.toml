@@ -1,6 +1,6 @@
 [tool.poetry]
-name = "register"
-version = "0.1.3"
+name = "registrate"
+version = "0.1.6"
 description = "Python object registers. Keep track of your classes, functions and data. "
 authors = ["Tom Bulled <26026015+tombulled@users.noreply.github.com>"]
 
