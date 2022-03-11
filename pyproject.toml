@@ -1,8 +1,13 @@
 [tool.poetry]
-name = "registrate"
-version = "0.1.6"
-description = "Python object registers. Keep track of your classes, functions and data. "
+name = "roster"
+version = "0.1.7"
+description = "Python object registers. Keep track of your classes, functions and data."
 authors = ["Tom Bulled <26026015+tombulled@users.noreply.github.com>"]
+license = "MIT"
+readme = "README.md"
+homepage = "https://github.com/tombulled/roster"
+repository = "https://github.com/tombulled/roster"
+keywords = ["youtube", "roster", "record", "register"]
 
 [tool.poetry.dependencies]
 python = "^3.8"
