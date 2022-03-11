@@ -1,37 +1,52 @@
-# register
+# roster
 Python object registers. Keep track of your classes, functions and data.
+
+## Installation
+```console
+pip install roster
+```
 
 ## Usage:
 
 ### `Record`
 
-#### Example: Basic Data Registration
-
-##### Implementation
+#### Example: Standard Record
 ```python
-import register
+import roster
 
-data = register.Record()
+numbers = roster.Record()
 
-data(1)
-data('foo')
-data(print)
+numbers(1)
+numbers(2)
+numbers(3)
 ```
 
-##### Usage
 ```python
->>> data
-[1, 'foo', <built-in function print>]
->>>
+>>> numbers
+[1, 2, 3]
 ```
 
-#### Example: Simple Decorator Registration
-
-##### Implementation
+#### Example: Hooked Record
 ```python
-import register
+import roster
 
-classes = register.Record()
+square_numbers = roster.Record(hook=lambda n: n ** 2)
+
+square_numbers(1)
+square_numbers(2)
+square_numbers(3)
+```
+
+```python
+>>> square_numbers
+[1, 4, 9]
+```
+
+#### Example: Decorator
+```python
+import roster
+
+classes = roster.Record()
 
 @classes
 class Foo: pass
@@ -44,38 +59,15 @@ class Bar: pass
 ```python
 >>> classes
 [<class '__main__.Foo'>, <class '__main__.Bar'>]
->>>
-```
-
-#### Example: Hooked Registration
-
-##### Implementation
-```python
-import register
-
-square_numbers = register.Record(lambda n: n ** 2)
-
-square_numbers(1)
-square_numbers(2)
-square_numbers(3)
-```
-
-##### Usage
-```python
->>> square_numbers
-[1, 4, 9]
->>>
 ```
 
 ### `Register`
 
-#### Example: Basic Contextual Registration
-
-##### Implementation
+#### Example: Standard Register
 ```python
-import register
+import roster
 
-functions = register.Register()
+functions = roster.Register()
 
 @functions(author = 'Sam')
 def foo(): ...
@@ -84,18 +76,17 @@ def foo(): ...
 def bar(): ...
 ```
 
-##### Usage
 ```python
 >>> functions
-{<function foo at 0x7fa9110a50d0>: Context(author='Sam'), <function bar at 0x7fa9110a5160>: Context(author='Robbie')}
->>>
+{
+    <function foo at 0x7fa9110a50d0>: Context(author='Sam'),
+    <function bar at 0x7fa9110a5160>: Context(author='Robbie')
+}
 ```
 
-#### Example: Hooked Registration
-
-##### Implementation
+#### Example: Hooked Register
 ```python
-import register
+import roster
 import dataclasses
 
 @dataclasses.dataclass
@@ -103,16 +94,14 @@ class Route:
     path: str
     method: str = 'GET'
 
-routes = register.Register(Route)
+routes = roster.Register(hook=Route)
 
 @routes('/user', method = 'POST')
 def create_user(name: str) -> str:
     return f'Created user: {name!r}'
 ```
 
-##### Usage
 ```python
 >>> routes
 {<function create_user at 0x7f2f9d775ee0>: Route(path='/user', method='POST')}
->>>
 ```
