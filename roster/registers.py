@@ -1,11 +1,10 @@
 import typing
 
-
 Hook: type = typing.Callable[[typing.Any], typing.Any]
 CompositionHook: type = typing.Callable[..., typing.Any]
 
 
-class Record(list):
+class List(list):
     _hook: typing.Optional[Hook]
 
     def __init__(self, hook: typing.Optional[Hook] = None):
@@ -23,34 +22,34 @@ class Record(list):
 # TODO: Support ability for (key, value) *and* (value, key)
 # Like Kafka's usage of .mapKey, .mapValue, .map
 class Register(dict):
-    _key_hook: typing.Optional[CompositionHook]
-    _value_hook: typing.Optional[CompositionHook]
+    _map_key: typing.Optional[CompositionHook]
+    _map_value: typing.Optional[CompositionHook]
 
     def __init__(
         self,
-        key_hook: typing.Optional[CompositionHook] = None,
-        value_hook: typing.Optional[CompositionHook] = None,
+        map_key: typing.Optional[CompositionHook] = None,
+        map_value: typing.Optional[CompositionHook] = None,
     ) -> None:
-        self._key_hook = key_hook
-        self._value_hook = value_hook
+        self._map_key = map_key
+        self._map_value = map_value
 
     def __call__(
         self, *args: typing.Any, **kwargs: typing.Any
     ) -> typing.Callable[[typing.T], typing.T]:
-        key: typing.Any = None
+        value: typing.Any = None
 
-        if self._key_hook is not None:
-            key = self._key_hook(*args, **kwargs)
+        if self._map_value is not None:
+            value = self._map_value(*args, **kwargs)
         elif args:
-            key = args[0]
+            value = args[0]
 
         def decorator(*args: typing.Any, **kwargs: typing.Any) -> typing.T:
-            value: typing.Any = None
+            key: typing.Any = None
 
-            if self._value_hook is not None:
-                value = self._value_hook(*args, **kwargs)
+            if self._map_key is not None:
+                key = self._map_key(*args, **kwargs)
             elif args:
-                value = args[0]
+                key = args[0]
 
             self[key] = value
 
