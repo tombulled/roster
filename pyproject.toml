@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "roster"
-version = "0.1.7"
+version = "0.1.8"
 description = "Python object registers. Keep track of your classes, functions and data."
 authors = ["Tom Bulled <26026015+tombulled@users.noreply.github.com>"]
 license = "MIT"
@@ -10,11 +10,12 @@ repository = "https://github.com/tombulled/roster"
 keywords = ["youtube", "roster", "record", "register"]
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = "^3.9"
 
 [tool.poetry.dev-dependencies]
 pytest = "^7.0.1"
 black = "^22.1.0"
+mypy = "^0.941"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
