@@ -1,11 +1,12 @@
-from typing import Any, Callable, Generic, TypeVar
+from typing import Any, Callable, Generic, TypeVar, Dict, List
+from types import SimpleNamespace
 
 T = TypeVar("T")
 K = TypeVar("K")
 V = TypeVar("V")
 
 
-class Record(Generic[T, V], list[V]):
+class Record(Generic[T, V], List[V]):
     def __init__(self, hook: Callable[[T], V], /) -> None:
         self._hook: Callable[[T], V] = hook
 
@@ -15,7 +16,7 @@ class Record(Generic[T, V], list[V]):
         return item
 
 
-class Roster(Generic[K, V], dict[K, V]):
+class Roster(Generic[K, V], Dict[K, V]):
     def __init__(self, hook: Callable[[V], K], /) -> None:
         self._hook: Callable[[V], K] = hook
 
@@ -25,7 +26,17 @@ class Roster(Generic[K, V], dict[K, V]):
         return value
 
 
-class Register(Generic[K, V], dict[K, V]):
+class InverseRoster(Generic[K, V], Dict[K, V]):
+    def __init__(self, hook: Callable[[K], V], /) -> None:
+        self._hook: Callable[[K], V] = hook
+
+    def __call__(self, key: K, /) -> K:
+        self[key] = self._hook(key)
+
+        return key
+
+
+class Register(Generic[K, V], Dict[K, V]):
     def __init__(self, hook: Callable[..., K], /) -> None:
         self._hook: Callable[..., K] = hook
 
@@ -40,13 +51,22 @@ class Register(Generic[K, V], dict[K, V]):
         return decorator
 
 
-def record(hook: Callable[[T], V], /) -> Record[T, V]:
-    return Record(hook)
+class InverseRegister(Generic[K, V], Dict[K, V]):
+    def __init__(self, hook: Callable[..., V], /) -> None:
+        self._hook: Callable[..., V] = hook
 
+    def __call__(self, *args: Any, **kwargs: Any) -> Callable[[K], K]:
+        value: V = self._hook(*args, **kwargs)
 
-def roster(hook: Callable[[V], K], /) -> Roster[K, V]:
-    return Roster(hook)
+        def decorator(key: K, /) -> K:
+            self[key] = value
 
+            return key
 
-def register(hook: Callable[..., K], /) -> Register[K, V]:
-    return Register(hook)
+        return decorator
+
+# class Namespace(SimpleNamespace[V]):
+#     def __init__(self, hook: Callable[[V], V], /) -> None:
+#         self._hook: Callable[[V], V] = hook
+
+#     def __call__(self, )
