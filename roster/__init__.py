@@ -1,11 +1,11 @@
-from .api import (
-    Record,
-    Roster,
-    Register,
+from .stores import (
+    ListStore,
+    SetStore,
+    DictStore,
+    NamespaceStore,
 )
 
-from .decorators import (
-    record,
-    roster,
-    register,
+from .wrappers import (
+    Record,
+    Register,
 )

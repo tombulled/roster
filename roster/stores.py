@@ -1,16 +1,5 @@
-from operator import setitem
 from types import SimpleNamespace
-from typing import Any, Callable, Dict, Set, Tuple, TypeVar, Generic, List
-from dataclasses import dataclass
-
-@dataclass(frozen=True, eq=True)
-class Route:
-    path: str
-    method: str
-
-@dataclass(frozen=True, eq=True)
-class Response:
-    data: str
+from typing import Any, Callable, Dict, Generic, List, Set, Tuple, TypeVar
 
 T = TypeVar('T')
 K = TypeVar('K')
@@ -88,7 +77,21 @@ class DictStore(Dict[K, V]):
         return proxy
 
 class NamespaceStore(Generic[V], SimpleNamespace):
-    def key(self, func: Callable[[V], K], /) -> Callable[[V], V]:
+    def __setattr__(self, key: str, value: V, /) -> None:
+        if key == '__orig_class__':
+            raise AttributeError
+
+        return super().__setattr__(key, value)
+
+    def __call__(self, key: str, /) -> Callable[[V], V]:
+        def proxy(value: V, /) -> V:
+            setattr(self, key, value)
+
+            return value
+
+        return proxy
+
+    def key(self, func: Callable[[V], str], /) -> Callable[[V], V]:
         def proxy(value: V, /) -> V:
             setattr(self, func(value), value)
 
@@ -96,8 +99,8 @@ class NamespaceStore(Generic[V], SimpleNamespace):
 
         return proxy
 
-    def value(self, func: Callable[[K], V], /) -> Callable[[K], K]:
-        def proxy(key: K, /) -> K:
+    def value(self, func: Callable[[str], V], /) -> Callable[[str], str]:
+        def proxy(key: str, /) -> str:
             setattr(self, key, func(key))
 
             return key
@@ -111,52 +114,3 @@ class NamespaceStore(Generic[V], SimpleNamespace):
             return item
 
         return proxy
-
-routes: DictStore[Route, Callable[..., Response]] = DictStore[Route, Callable[..., Response]]()
-            
-@routes.key
-def route(path: str, method: str='GET') -> Route:
-    return Route(path=path, method=method)
-
-@route('/foo')
-def foo() -> Response:
-    return Response('Foo!')
-
-@routes(Route('/bar', method='POST'))
-def bar() -> Response:
-    return Response('Bar!')
-
-numbers: ListStore[int] = ListStore[int]()
-
-@numbers.item
-def number(n: int, /) -> int:
-    return n * 10
-
-number(1)
-number(2)
-number(3)
-numbers(4)
-
-characters: SetStore[str] = SetStore[str]()
-
-characters('a')
-characters('b')
-characters('a')
-
-attributes: DictStore[str, Callable] = DictStore[str, Callable]()
-
-@attributes.entry
-def attribute(func: Callable, /) -> Tuple[str, Callable]:
-    return (func.__name__, func)
-
-@attribute
-def func(): pass
-
-namespace: NamespaceStore[type] = NamespaceStore[type]()
-
-@namespace.key
-def cls(cls: type) -> str:
-    return cls.__name__
-
-@cls
-class Foo: pass
