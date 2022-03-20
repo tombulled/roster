@@ -2,6 +2,7 @@
 Python object registers. Keep track of your classes, functions and data.
 
 ## Installation
+`roster` can be installed from [PyPI](https://pypi.org/project/roster/)
 ```console
 pip install roster
 ```
