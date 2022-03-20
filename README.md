@@ -2,6 +2,7 @@
 Python object registers. Keep track of your classes, functions and data.
 
 ## Installation
+`roster` can be installed from [PyPI](https://pypi.org/project/roster/)
 ```console
 pip install roster
 ```
@@ -10,11 +11,11 @@ pip install roster
 
 ### `Record`
 
-#### Example: Standard Record
+#### Default Record
 ```python
-import roster
+from roster import Record
 
-numbers = roster.Record()
+numbers: Record[int] = Record()
 
 numbers(1)
 numbers(2)
@@ -26,82 +27,108 @@ numbers(3)
 [1, 2, 3]
 ```
 
-#### Example: Hooked Record
+#### Generate each `item`
 ```python
-import roster
+from roster import Record
 
-square_numbers = roster.Record(hook=lambda n: n ** 2)
+characters: Record[str] = Record()
 
-square_numbers(1)
-square_numbers(2)
-square_numbers(3)
+@characters.item
+def character(char: str, /) -> str:
+    return char.upper()
+
+character('a')
+character('b')
+character('c')
 ```
 
 ```python
->>> square_numbers
-[1, 4, 9]
-```
-
-#### Example: Decorator
-```python
-import roster
-
-classes = roster.Record()
-
-@classes
-class Foo: pass
-
-@classes
-class Bar: pass
-```
-
-##### Usage
-```python
->>> classes
-[<class '__main__.Foo'>, <class '__main__.Bar'>]
+>>> characters
+['A', 'B', 'C']
 ```
 
 ### `Register`
 
-#### Example: Standard Register
+#### Default Register
 ```python
-import roster
+from roster import Register
 
-functions = roster.Register()
+services: Register[str, type] = Register()
 
-@functions(author = 'Sam')
-def foo(): ...
+@services('youtube')
+class YouTube: pass
 
-@functions(author = 'Robbie')
-def bar(): ...
+@services('spotify')
+class Spotify: pass
+```
+
+```python
+>>> services
+{'youtube': <class '__main__.YouTube'>, 'spotify': <class '__main__.Spotify'>}
+```
+
+#### Generate each `key`
+```python
+from roster import Register
+from typing import Callable
+
+functions: Register[str, Callable] = Register()
+
+@functions.key
+def function(name: str, /) -> str:
+    return name.upper()
+
+@function('foo')
+def foo(): pass
+
+@function('bar')
+def bar(): pass
 ```
 
 ```python
 >>> functions
-{
-    <function foo at 0x7fa9110a50d0>: Context(author='Sam'),
-    <function bar at 0x7fa9110a5160>: Context(author='Robbie')
-}
+{'FOO': <function foo at 0x7f9c4f065790>, 'BAR': <function bar at 0x7f9c4f065820>}
 ```
 
-#### Example: Hooked Register
+#### Generate each `value`
 ```python
-import roster
-import dataclasses
+from roster import Register
+from typing import Callable
 
-@dataclasses.dataclass
-class Route:
-    path: str
-    method: str = 'GET'
+functions: Register[str, Callable] = Register()
 
-routes = roster.Register(hook=Route)
+@functions.value
+def function(name: str, /) -> str:
+    return name.upper()
 
-@routes('/user', method = 'POST')
-def create_user(name: str) -> str:
-    return f'Created user: {name!r}'
+@function('foo')
+def foo(): pass
+
+@function('bar')
+def bar(): pass
 ```
 
 ```python
->>> routes
-{<function create_user at 0x7f2f9d775ee0>: Route(path='/user', method='POST')}
+>>> functions
+{<function foo at 0x7f26443aa790>: 'FOO', <function bar at 0x7f26443aa820>: 'BAR'}
+```
+
+#### Generate each `entry`
+```python
+from roster import Register
+from typing import Tuple
+
+identifiers: Register[str, str] = Register()
+
+@identifiers.entry
+def identifier(code: str, /) -> Tuple[str, str]:
+    return (code[0], code.upper())
+
+identifier('foo')
+identifier('bar')
+```
+
+```python
+>>> identifiers
+{'f': 'FOO', 'b': 'BAR'}
 ```
