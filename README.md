@@ -14,7 +14,7 @@ pip install roster
 ```python
 from roster import Record
 
-numbers: Record[int] = roster.Record()
+numbers: Record[int] = Record()
 
 numbers(1)
 numbers(2)
@@ -26,7 +26,7 @@ numbers(3)
 [1, 2, 3]
 ```
 
-#### Generate each `item`
+#### Pre-process each `item`
 ```python
 from roster import Record
 
@@ -66,7 +66,7 @@ class Spotify: pass
 {'youtube': <class '__main__.YouTube'>, 'spotify': <class '__main__.Spotify'>}
 ```
 
-#### Generate the `key`
+#### Generate each `key`
 ```python
 from roster import Register
 from typing import Callable
@@ -89,7 +89,7 @@ def bar(): pass
 {'FOO': <function foo at 0x7f9c4f065790>, 'BAR': <function bar at 0x7f9c4f065820>}
 ```
 
-#### Generate the `value`
+#### Generate each `value`
 ```python
 from roster import Register
 from typing import Callable
@@ -112,7 +112,7 @@ def bar(): pass
 {<function foo at 0x7f26443aa790>: 'FOO', <function bar at 0x7f26443aa820>: 'BAR'}
 ```
 
-#### Generate an `entry`
+#### Generate each `entry`
 ```python
 from roster import Register
 from typing import Tuple

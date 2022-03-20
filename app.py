@@ -1,11 +1,7 @@
-from roster import Register
-from typing import Tuple
+from roster import Record
 
-identifiers: Register[str, str] = Register()
+numbers: Record[int] = Record()
 
-@identifiers.entry
-def identifier(code: str, /) -> Tuple[str, str]:
-    return (code[0], code.upper())
-
-identifier('foo')
-identifier('bar')
+numbers(1)
+numbers(2)
+numbers(3)

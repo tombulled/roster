@@ -1,31 +1,52 @@
+from typing import Dict, List, Tuple
+import pytest
 import roster
 
 
-def test_default() -> None:
-    register: roster.Register = roster.Register()
-
-    register("Ben", age=10)("ben")
-    register("Sam", age=25)("sam")
-
-    assert register == {
-        "ben": roster.Context("Ben", age=10),
-        "sam": roster.Context("Sam", age=25),
-    }
+@pytest.fixture
+def register() -> roster.Register[str, int]:
+    return roster.Register[str, int]()
 
 
-def test_hooked() -> None:
-    register: roster.Register = roster.Register(hook=dict)
+def test_default(register: roster.Register[str, int]) -> None:
+    inputs: Dict[str, int] = {"foo": 1, "bar": 2}
+    outputs: List[int] = [register(key)(value) for key, value in inputs.items()]
 
-    register(name="Ben", age=10)("ben")
-    register(name="Sam", age=25)("sam")
+    assert outputs == list(inputs.values())
+    assert register == inputs
 
-    assert register == {
-        "ben": {
-            "name": "Ben",
-            "age": 10,
-        },
-        "sam": {
-            "name": "Sam",
-            "age": 25,
-        },
-    }
+
+def test_gen_key(register: roster.Register[str, int]) -> None:
+    @register.key
+    def reg(key: str, /) -> str:
+        return key.upper()
+
+    inputs: Dict[str, int] = {"foo": 1, "bar": 2}
+    outputs: List[int] = [reg(key)(value) for key, value in inputs.items()]
+
+    assert outputs == list(inputs.values())
+    assert register == {key.upper(): value for key, value in inputs.items()}
+
+
+def test_gen_value(register: roster.Register[str, int]) -> None:
+    @register.value
+    def reg(value: int, /) -> int:
+        return value * 10
+
+    inputs: Dict[str, int] = {"foo": 1, "bar": 2}
+    outputs: List[str] = [reg(value)(key) for key, value in inputs.items()]
+
+    assert outputs == list(inputs.keys())
+    assert register == {key: value * 10 for key, value in inputs.items()}
+
+
+def test_gen_entry(register: roster.Register[str, int]) -> None:
+    @register.entry
+    def reg(item: str, /) -> Tuple[str, int]:
+        return (item.upper(), len(item))
+
+    inputs: List[str] = ["foo", "bar"]
+    outputs: List[str] = [reg(item) for item in inputs]
+
+    assert outputs == inputs
+    assert register == {item.upper(): len(item) for item in inputs}
