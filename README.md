@@ -27,7 +27,7 @@ numbers(3)
 [1, 2, 3]
 ```
 
-#### Pre-process each `item`
+#### Generate each `item`
 ```python
 from roster import Record
 
