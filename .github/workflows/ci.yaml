@@ -4,4 +4,5 @@ on: push
 
 jobs:
   ci:
+    name: CI
     uses: tombulled/ci/.github/workflows/ci.yaml@main
