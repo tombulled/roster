@@ -1,5 +1,7 @@
 name: CI
+
 on: push
+
 jobs:
   ci:
     uses: tombulled/ci/.github/workflows/ci.yaml@main
