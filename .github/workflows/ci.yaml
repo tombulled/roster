@@ -2,4 +2,4 @@ name: CI
 on: push
 jobs:
   ci:
-    uses: tombulled/cicd/.github/workflows/ci.yaml@main
+    uses: tombulled/ci/.github/workflows/ci.yaml@main
