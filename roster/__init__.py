@@ -1,1 +1,1 @@
-from .concrete import Record, Register
+from .concrete import NamespaceRegister, Record, Register, SetRecord

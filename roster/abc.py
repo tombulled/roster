@@ -1,30 +1,57 @@
-import operator
-from typing import Any, Callable, MutableMapping, MutableSequence, Tuple, TypeVar
+from abc import ABC, abstractmethod
+from typing import (
+    Any,
+    Callable,
+    Generic,
+    MutableMapping,
+    MutableSequence,
+    MutableSet,
+    Tuple,
+    TypeVar,
+)
 
 T = TypeVar("T")
 K = TypeVar("K")
 V = TypeVar("V")
 
 
-class RecordABC(MutableSequence[V]):
+class RecordABC(ABC, Generic[V]):
+    @abstractmethod
+    def record(self, value: V, /) -> None:
+        raise NotImplementedError
+
     def __call__(self, value: V, /) -> V:
-        self.append(value)
+        self.record(value)
 
         return value
 
     def item(self, func: Callable[[T], V], /) -> Callable[[T], T]:
         def proxy(item: T, /) -> T:
-            self.append(func(item))
+            self.record(func(item))
 
             return item
 
         return proxy
 
 
-class RegisterABC(MutableMapping[K, V]):
+class SequenceRecordABC(RecordABC[V], MutableSequence[V]):
+    def record(self, value: V, /) -> None:
+        self.append(value)
+
+
+class SetRecordABC(RecordABC[V], MutableSet[V]):
+    def record(self, value: V, /) -> None:
+        self.add(value)
+
+
+class RegisterABC(ABC, Generic[K, V]):
+    @abstractmethod
+    def register(self, key: K, value: V, /) -> None:
+        raise NotImplementedError
+
     def __call__(self, key: K, /) -> Callable[[V], V]:
         def proxy(value: V, /) -> V:
-            self[key] = value
+            self.register(key, value)
 
             return value
 
@@ -35,7 +62,7 @@ class RegisterABC(MutableMapping[K, V]):
             key: K = func(*args, **kwargs)
 
             def decorator(value: V, /) -> V:
-                self[key] = value
+                self.register(key, value)
 
                 return value
 
@@ -48,7 +75,7 @@ class RegisterABC(MutableMapping[K, V]):
             value: V = func(*args, **kwargs)
 
             def decorator(key: K, /) -> K:
-                self[key] = value
+                self.register(key, value)
 
                 return key
 
@@ -58,8 +85,13 @@ class RegisterABC(MutableMapping[K, V]):
 
     def entry(self, func: Callable[[T], Tuple[K, V]], /) -> Callable[[T], T]:
         def proxy(item: T, /) -> T:
-            operator.setitem(self, *func(item))
+            self.register(*func(item))
 
             return item
 
         return proxy
+
+
+class MappingRegisterABC(RegisterABC[K, V], MutableMapping[K, V]):
+    def register(self, key: K, value: V, /) -> None:
+        self[key] = value
