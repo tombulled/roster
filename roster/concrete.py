@@ -1,14 +1,24 @@
-from typing import Dict, List, TypeVar
+from types import SimpleNamespace
+from typing import Dict, List, Set, TypeVar
 
-from .abc import RecordABC, RegisterABC
+from .abc import MappingRegisterABC, RegisterABC, SequenceRecordABC, SetRecordABC
 
 K = TypeVar("K")
 V = TypeVar("V")
 
 
-class Record(List[V], RecordABC[V]):
+class Record(List[V], SequenceRecordABC[V]):
     pass
 
 
-class Register(Dict[K, V], RegisterABC[K, V]):
+class SetRecord(Set[V], SetRecordABC[V]):
     pass
+
+
+class Register(Dict[K, V], MappingRegisterABC[K, V]):
+    pass
+
+
+class NamespaceRegister(RegisterABC[str, V], SimpleNamespace):
+    def register(self, key: str, value: V, /) -> None:
+        setattr(self, key, value)
