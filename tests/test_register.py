@@ -1,6 +1,8 @@
 from types import SimpleNamespace
 from typing import Dict, List, Tuple
+
 import pytest
+
 import roster
 
 
